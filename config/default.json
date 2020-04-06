@@ -1,0 +1,10 @@
+{
+	"connectionString": "postgressql://usercontent:usercontent123@34.76.202.103:5432/usercontent",
+	"pool": {
+		"user": "usercontent",
+		"password": "usercontent",
+		"host": "34.76.202.103",
+		"port": "5432",
+		"database": "usercontent"
+	}
+}

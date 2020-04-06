@@ -1,6 +1,13 @@
 const express = require('express');
 
+const connectDB = require('./config/db');
+
 const app = express();
+
+app.use(express.json()); // for request.body
+
+// Connect Database
+connectDB();
 
 app.get('/', (req, res) => {
 	try {
