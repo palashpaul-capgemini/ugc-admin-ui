@@ -1,16 +1,13 @@
 const express = require('express');
-const connectDB = require('./config/db');
-
+require('dotenv').config();
+const db = require('./config/database');
 const app = express();
 
-app.use(express.json()); // for request.body
-
-// Connect Database
-connectDB();
+app.use(express.json({ extended: false })); // for request.body
 
 app.get('/', (req, res) => {
 	try {
-		res.send(`API running`);
+		res.status(200).json({ message: `API running` });
 	} catch (error) {
 		res.status(500).send(`Something wen't wrong. ${error.message}`);
 	}
@@ -21,6 +18,12 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 
 const PORT = process.env.PORT || 5000;
+
+db.authenticate()
+	.then(() => {
+		console.log('Database connected...');
+	})
+	.catch((error) => console.log('Error: ' + error));
 
 app.listen(PORT, () => {
 	try {
