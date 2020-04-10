@@ -25,4 +25,4 @@ const Country = db.define(
 	}
 );
 
-module.exports = User;
+module.exports = Country;
