@@ -12,7 +12,7 @@ import { AccountCircle, EmailRounded, Menu } from '@material-ui/icons';
 export const Navbar = () => {
 	return (
 		<Fragment>
-			<nav className='navbar'>
+			{/* <nav className='navbar'>
 				<h1>
 					<Link to='/'>
 						<i>IKEA</i>
@@ -30,15 +30,30 @@ export const Navbar = () => {
 						</Link>
 					</li>
 				</ul>
-			</nav>
+			</nav> */}
 
 			<AppBar position='static'>
 				<Toolbar>
 					<IconButton edge='start' color='inherit' aria-label='menu'>
 						<Menu />
 					</IconButton>
-					<Typography variant='h6'>News</Typography>
-					<Button color='inherit'>Login</Button>
+					<Typography variant='h6'>
+						<Link to='/'>
+							<i>IKEA</i>
+						</Link>
+					</Typography>
+					<Button color='inherit'>
+						<Link to='/login'>
+							<i>Login</i>
+						</Link>
+					</Button>
+					<Button color='inherit'>
+						<Link to='/login'>
+							<Link to='/register'>
+								<i>Register</i>
+							</Link>
+						</Link>
+					</Button>
 				</Toolbar>
 			</AppBar>
 		</Fragment>
