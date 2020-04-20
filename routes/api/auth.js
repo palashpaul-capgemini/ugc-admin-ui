@@ -21,10 +21,10 @@ router.get('/', auth, async (req, res) => {
 				exclude: ['password'],
 			},
 		});
-		res.json(user);
+		return res.status(200).json(user);
 	} catch (error) {
-		console.error('Error: ' + error);
-		res.status(500).send('Server error');
+		// console.error('Error: ' + error);
+		return res.status(500).json(`Server error: ${error}`);
 	}
 });
 
@@ -35,16 +35,17 @@ router.post(
 	'/',
 	[
 		check('email', 'Please include a valid email').isEmail(),
-		check('password', 'Password is required').exists(),
+		check('password', 'Password is required').isLength({ min: 6 }),
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
+		console.log(errors.array());
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
 
-		const { email, password } = req.body;
 		try {
+			const { email, password } = req.body;
 			let user = await User.findOne({
 				where: { useremail: email },
 			});
@@ -74,14 +75,13 @@ router.post(
 					if (error) {
 						throw error;
 					}
-					res.json(token);
+					return res.json({ token });
 				}
 			);
 
 			//res.send('Users route');
 		} catch (error) {
-			console.error(error.message);
-			res.status(500).send(`Server error: ${error}`);
+			return res.status(500).json(`Server error: ${error.msg}`);
 		}
 	}
 );

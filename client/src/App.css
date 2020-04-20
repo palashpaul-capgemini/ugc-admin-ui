@@ -1,0 +1,30 @@
+Global Styles :root {
+	--primary-color: #1851b9;
+	--dark-color: #0c4b8a;
+	--light-color: #f4f4f4;
+	--danger-color: #da2335;
+	--success-color: #19ad3c;
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	/* font-family: sans-serif; */
+	font-size: 1rem;
+	line-height: 1.6;
+	background-color: #fff;
+	color: rgb(0, 0, 0);
+}
+
+a {
+	color: var(--light-color);
+	text-decoration: none;
+}
+
+ul {
+	list-style: none;
+}
