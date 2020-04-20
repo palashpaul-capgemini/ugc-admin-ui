@@ -24,7 +24,7 @@ router.get('/', auth, async (req, res) => {
 		return res.status(200).json(user);
 	} catch (error) {
 		// console.error('Error: ' + error);
-		return res.status(500).json(`Server error: ${error}`);
+		return res.status(500).json({ errors: [{ msg: 'Server error' }] });
 	}
 });
 
@@ -39,25 +39,30 @@ router.post(
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
-		console.log(errors.array());
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
 
 		try {
 			const { email, password } = req.body;
+
 			let user = await User.findOne({
 				where: { useremail: email },
 			});
 
 			if (!user) {
-				return res.status(400).json({ errors: 'Invalid Credentials' });
+				return res
+					.status(400)
+					.json({ errors: [{ msg: 'Invalid Credentials' }] });
 			}
 
 			// Compare user
 			const isMatch = await bcrypt.compare(password, user.password);
 			if (!isMatch) {
-				return res.status(400).json({ errors: 'Invalid Credentials' });
+				// return res.status(400).json({ errors: 'Invalid Credentials' });
+				return res
+					.status(400)
+					.json({ errors: [{ msg: 'Invalid Credentials' }] });
 			}
 
 			// Return jsonwebtoken
@@ -82,9 +87,7 @@ router.post(
 
 			//res.send('Users route');
 		} catch (error) {
-			return res
-				.status(500)
-				.json({ errors: { masg: `Server error: ${error.msg}` } });
+			return res.status(500).json({ errors: [{ msg: 'Server error' }] });
 		}
 	}
 );

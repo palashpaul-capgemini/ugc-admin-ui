@@ -37,7 +37,6 @@ router.post(
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
-
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
@@ -52,11 +51,11 @@ router.post(
 					.json({ errors: [{ msg: 'User already exists' }] });
 			}
 
-			user = new User({
-				useremail: email.toString(),
-				password,
-				roleid,
-			});
+			// user = new User({
+			// 	useremail: email.toString(),
+			// 	password,
+			// 	roleid,
+			// });
 
 			// Encrypt password
 
@@ -68,7 +67,7 @@ router.post(
 				password: hashedPassword,
 				roleid: roleid,
 			});
-			// //await user.destroy();
+			//await user.destroy();
 
 			// Return jsonwebtoken
 			const payload = {
@@ -91,7 +90,7 @@ router.post(
 			);
 		} catch (error) {
 			// console.error(error.message);
-			return res.status(500).json(`Server error: ${error}`);
+			return res.status(500).json({ errors: [{ msg: 'Server error' }] });
 		}
 	}
 );
