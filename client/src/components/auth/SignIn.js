@@ -50,7 +50,7 @@ export class SignIn extends Component {
 	render() {
 		// Redirect if logged in
 		if (this.props.isAuthenticated) {
-			console.log(this.props.isAuthenticated);
+			// console.log(this.props.isAuthenticated);
 			return <Redirect to='/dashboard' />;
 		}
 		return (
