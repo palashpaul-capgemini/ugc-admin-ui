@@ -17,6 +17,9 @@ app.get('/', (req, res) => {
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/countries', require('./routes/api/countries'));
+app.use('/api/lang', require('./routes/api/lang'));
+app.use('/api/list', require('./routes/api/listconfig'));
+app.use('/api/config', require('./routes/api/saveconfig'));
 
 const PORT = process.env.PORT || 5000;
 

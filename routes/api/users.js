@@ -52,11 +52,11 @@ router.post(
 					.json({ errors: [{ msg: 'User already exists' }] });
 			}
 
-			user = new User({
-				useremail: email.toString(),
-				password,
-				roleid,
-			});
+			// user = new User({
+			// 	useremail: email.toString(),
+			// 	password,
+			// 	roleid,
+			// });
 
 			// Encrypt password
 

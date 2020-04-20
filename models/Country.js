@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../config/database');
+const Role = require('./Role');
 
 const Country = db.define(
 	'countrylookup',
@@ -24,5 +25,10 @@ const Country = db.define(
 		timestamps: false,
 	}
 );
+Country.hasOne(Role, { foreignKey: 'countrycode' });
+Role.belongsTo(Country, { foreignKey: 'countrycode' });
+
+Country.sync();
+Role.sync();
 
 module.exports = Country;
