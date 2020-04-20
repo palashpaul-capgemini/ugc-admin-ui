@@ -39,7 +39,7 @@ router.post(
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
-		console.log(errors.array());
+
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
@@ -84,7 +84,7 @@ router.post(
 		} catch (error) {
 			return res
 				.status(500)
-				.json({ errors: { masg: `Server error: ${error.msg}` } });
+				.json({ errors: { msg: `Server error: ${error.msg}` } });
 		}
 	}
 );
