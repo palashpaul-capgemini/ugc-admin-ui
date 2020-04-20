@@ -37,7 +37,6 @@ router.post(
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
-
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
@@ -68,7 +67,7 @@ router.post(
 				password: hashedPassword,
 				roleid: roleid,
 			});
-			// //await user.destroy();
+			//await user.destroy();
 
 			// Return jsonwebtoken
 			const payload = {
