@@ -21,10 +21,10 @@ router.get('/', auth, async (req, res) => {
 				exclude: ['password'],
 			},
 		});
-		return res.status(200).json(user);
+		res.json(user);
 	} catch (error) {
-		// console.error('Error: ' + error);
-		return res.status(500).json(`Server error: ${error}`);
+		console.error('Error: ' + error);
+		res.status(500).send('Server error');
 	}
 });
 
@@ -35,17 +35,16 @@ router.post(
 	'/',
 	[
 		check('email', 'Please include a valid email').isEmail(),
-		check('password', 'Password is required').isLength({ min: 6 }),
+		check('password', 'Password is required').exists(),
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
-		console.log(errors.array());
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
 
+		const { email, password } = req.body;
 		try {
-			const { email, password } = req.body;
 			let user = await User.findOne({
 				where: { useremail: email },
 			});
@@ -64,7 +63,7 @@ router.post(
 			const payload = {
 				user: {
 					useremail: email,
-					roleid: user.roleid,
+					roleid: user.roleid
 				},
 			};
 
@@ -76,13 +75,14 @@ router.post(
 					if (error) {
 						throw error;
 					}
-					return res.json({ token });
+					res.json(token);
 				}
 			);
 
 			//res.send('Users route');
 		} catch (error) {
-			return res.status(500).json(`Server error: ${error.msg}`);
+			console.error(error.message);
+			res.status(500).send(`Server error: ${error}`);
 		}
 	}
 );

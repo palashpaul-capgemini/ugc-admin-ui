@@ -1,22 +1,27 @@
 const Sequelize = require('sequelize');
 const db = require('../config/database');
-const Role = require('./Role');
 
-const Country = db.define(
-	'countrylookup',
+const Lang = db.define(
+	'langlookup',
 	{
 		countrycode: {
 			type: Sequelize.STRING,
 			primaryKey: true,
 			required: true,
 			unique: true,
+        },
+        langcode: {
+			type: Sequelize.STRING,
+			primaryKey: true,
+            required: true
 		},
-		countryname: {
+		langdescription: {
 			type: Sequelize.STRING,
 			required: true,
 		},
-		enable: {
-			type: Sequelize.INTEGER,
+		locale: {
+            type: Sequelize.INTEGER,
+            required: true,
 		},
 	},
 	{
@@ -25,10 +30,5 @@ const Country = db.define(
 		timestamps: false,
 	}
 );
-Country.hasOne(Role,{foreignKey: 'countrycode'});
-Role.belongsTo(Country,{foreignKey: 'countrycode'});
 
-Country.sync();
-Role.sync();
-
-module.exports = Country;
+module.exports = Lang;
