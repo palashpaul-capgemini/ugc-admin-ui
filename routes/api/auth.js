@@ -82,7 +82,9 @@ router.post(
 
 			//res.send('Users route');
 		} catch (error) {
-			return res.status(500).json(`Server error: ${error.msg}`);
+			return res
+				.status(500)
+				.json({ errors: { masg: `Server error: ${error.msg}` } });
 		}
 	}
 );
