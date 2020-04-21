@@ -1,9 +1,11 @@
 import React from 'react';
 // import { Link } from 'react-router-dom';
 import { Container, Paper, Box } from '@material-ui/core';
+import PropTypes from 'prop-types';
+
 // import { makeStyles } from '@material-ui/core/styles';
 
-const Dashboard = () => {
+const Dashboard = (props) => {
 	return (
 		<Container component='main' maxWidth='xs'>
 			<Paper>
