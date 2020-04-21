@@ -9,20 +9,21 @@ const auth = require('../../middleware/auth');
 //router.get('/', (req, res) => res.send('Lang route'));
 
 router.get('/', auth, async (req, res) => {
+	console.log('RGT');
 	try {
-        var constraint = 'true';
+		var constraint = 'true';
 		await Lang.findAll({
-            where : {
-                enable : constraint
-            },attributes:['langcode','countrycode','locale']
-        }).then((countries)=>{
-            res.status(200).json(countries);
-        })
+			where: {
+				enable: constraint,
+			},
+			attributes: ['langcode', 'countrycode', 'locale'],
+		}).then((countries) => {
+			res.status(200).json(countries);
+		});
 	} catch (error) {
 		console.error(error.message);
 		res.status(500).send(`Server error: ${error}`);
 	}
 });
-
 
 module.exports = router;

@@ -23,6 +23,7 @@ import { setAlert, removeAlert } from '../../actions/alert';
 import { register } from '../../actions/auth';
 
 import { withStyles } from '@material-ui/core/styles';
+import Locale from './Locale';
 
 const styles = (theme) => ({
 	formControl: {
@@ -39,10 +40,13 @@ export class Dashboard extends Component {
 		super(props);
 		this.state = {
 			countries: [],
-			country: '',
+			country: null,
+			countrycode: null,
+			lang: [],
 		};
 
 		this.getCountires = this.getCountires.bind(this);
+		this.handleChange = this.handleChange.bind(this);
 	}
 
 	componentDidMount() {
@@ -59,6 +63,29 @@ export class Dashboard extends Component {
 		}
 	};
 
+	handleChange = async (e, countryString) => {
+		e.preventDefault();
+		const country = JSON.parse(countryString);
+		// try {
+		// 	const config = {
+		// 		headers: { 'Content-Type': 'application/json' },
+		// 	};
+		// 	const body = JSON.stringify({ countrycode: country.countrycode });
+		// 	const res = await axios.post('/api/lang', body, config);
+		// 	console.log(res.data);
+		// 	this.setState({ lang: res.data });
+
+		this.setState((prevState) => ({
+			...prevState,
+			country: country,
+			countrycode: country.countrycode,
+			// 		lang: res.data,
+		}));
+		// } catch (error) {
+		// 	console.error(error);
+		// }
+	};
+
 	render() {
 		const { classes } = this.props;
 		return (
@@ -72,23 +99,12 @@ export class Dashboard extends Component {
 						{this.state.countires !== null &&
 						this.state.countries.length > 0 ? (
 							<FormControl className={classes.formControl}>
-								{/* <InputLabel id='demo-simple-select-label'>Age</InputLabel> */}
-								{/* <Select
-									labelId='demo-simple-select-label'
-									id='demo-simple-select'
-									value={this.state.countries[0]}
-									// onChange={handleChange}
-								>
-									{this.state.countries.map((country) => {
-										return <MenuItem value={10}>{country.toString()}</MenuItem>;
-									})}
-								</Select> */}
 								<InputLabel htmlFor='countryname-native-helper'>
 									Country
 								</InputLabel>
 								<NativeSelect
-									value={this.state.countries.countryname}
-									// onChange={handleChange}
+									value={this.state.countries.countrycode}
+									onChange={(e) => this.handleChange(e, e.target.value)}
 									inputProps={{
 										name: 'countryname',
 										id: 'countryname-native-helper',
@@ -99,7 +115,11 @@ export class Dashboard extends Component {
 										return (
 											<option
 												key={country.countrycode}
-												value={{ countryname: country.countryname }}
+												// value={country.countrycode}
+												value={JSON.stringify({
+													countryname: country.countryname,
+													countrycode: country.countrycode,
+												})}
 											>
 												{country.countryname}
 											</option>
@@ -108,6 +128,12 @@ export class Dashboard extends Component {
 								</NativeSelect>
 							</FormControl>
 						) : null}
+						{this.state.country !== null && this.state.countrycode !== null && (
+							<Locale
+								country={this.state.country}
+								countrycode={this.state.countrycode}
+							/>
+						)}
 					</Container>
 				</Box>
 			</Fragment>
@@ -120,5 +146,3 @@ Dashboard.propTypes = {
 };
 
 export default withStyles(styles)(Dashboard);
-
-// export default Dashboard;
