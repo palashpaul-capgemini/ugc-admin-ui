@@ -4,7 +4,8 @@ const { check, validationResult } = require('express-validator');
 const Lang = require('../../models/Lang');
 const CountryLang = require('../../models/CountryLang');
 const auth = require('../../middleware/auth');
-const Role = require('../../models/Role');
+const Sequelize = require('sequelize');
+
 // @rout    GET api/user
 // @desc    Test countries route
 // @access  Private
@@ -12,7 +13,6 @@ const Role = require('../../models/Role');
 
 router.post('/', auth, async (req, res) => {
 	try {
-		console.log(req.body);
 		if (!req.body.countrycode) {
 			return res.status(400).json({ errors: 'Please select countrycode' });
 		}
