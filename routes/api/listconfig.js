@@ -12,6 +12,7 @@ const Op = Sequelize.Op;
 //const pool = new Pool({
 //connectionString : connectionString
 //})
+
 // @rout    GET api/user
 // @desc    Test countries route
 // @access  Private

@@ -15,6 +15,7 @@ import {
 	Box,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import Configlist from './Configlist';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -54,8 +55,8 @@ export class Locale extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			country: null,
-			countrycode: null,
+			country: this.props.country,
+			countrycode: this.props.countrycode,
 			lang: [],
 		};
 
@@ -65,6 +66,12 @@ export class Locale extends Component {
 
 	componentDidMount() {
 		this.getLocale();
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (prevProps.country !== this.props.country) {
+			this.getLocale();
+		}
 	}
 
 	getLocale = async () => {
@@ -89,32 +96,10 @@ export class Locale extends Component {
 		}
 	};
 
-	handleChange = async (e, langString) => {
+	handleChange = async (e) => {
 		e.preventDefault();
-		const lang = JSON.parse(langString);
-		try {
-			// const config = {
-			// 	headers: { 'Content-Type': 'application/json' },
-			// };
-			// const body = JSON.stringify({
-			// 	langcode: lang.langcode,
-			// 	countrycode: this.props.countrycode,
-			// 	locale: lang.locale,
-			// });
-			// const res = await axios.post('/api/lang', body, config);
-			const res = await axios.get('/api/list');
-			console.log(res.data);
-			// this.setState({ lang: res.data });
-
-			// this.setState((prevState) => ({
-			// 	...prevState,
-			// 	country: country,
-			// 	countrycode: country.countrycode,
-			// 	lang: res.data,
-			// }));
-		} catch (error) {
-			console.error(error);
-		}
+		// const res = await axios.get('/api/list');
+		// console.log(res.data);
 	};
 
 	render() {
@@ -154,46 +139,10 @@ export class Locale extends Component {
 								})}
 							</NativeSelect>
 						</FormControl>
-					) : // 	<Box mt={8}>
-					// <FormControl className={classes.formControl}>
-
-					// 		<InputLabel id='demo-mutiple-chip-label'>Chip</InputLabel>
-					// 		<Select
-					// 			labelId='demo-mutiple-chip-label'
-					// 			id='demo-mutiple-chip'
-					// 			multiple
-					// 			value={this.state.lang}
-					// 			onChange={(e) => this.handleChange(e, e.target.value)}
-					// 			input={<Input id='select-multiple-chip' />}
-					// 			renderValue={(selected) => (
-					// 				<div className={classes.chips}>
-					// 					{this.state.lang.map((value) => (
-					// 						<Chip
-					// 							key={value.locale}
-					// 							label={value.locale}
-					// 							className={classes.chip}
-					// 						/>
-					// 					))}
-					// 				</div>
-					// 			)}
-					// 			MenuProps={MenuProps}
-					// 		>
-					// 			{this.state.lang.map((lang) => (
-					// 				<MenuItem
-					// 					key={lang.locale}
-					// 					value={lang.locale}
-					// 					// style={getStyles(name, personName, theme)}
-					// 				>
-					// 					{lang.locale}
-					// 				</MenuItem>
-					// 			))}
-					// 		</Select>
-
-					// </FormControl>
-					// </Box>
-					null}
+					) : null}
 					{/* </Container> */}
 				</Box>
+				<Configlist />
 			</Fragment>
 		);
 	}
