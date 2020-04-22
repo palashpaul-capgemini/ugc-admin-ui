@@ -15,13 +15,13 @@ import {
 	Box,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import Configlist from './Configlist';
 
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = (theme) => ({
 	formControl: {
 		margin: theme.spacing(1),
+		width: '100%',
 		minWidth: 120,
 		maxWidth: 300,
 	},
@@ -80,7 +80,7 @@ export class Locale extends Component {
 				headers: { 'Content-Type': 'application/json' },
 			};
 			const body = JSON.stringify({ countrycode: this.props.countrycode });
-			console.log('body: ' + body);
+			// console.log('body: ' + body);
 			const res = await axios.post('/api/lang', body, config);
 			console.log(res.data);
 			// this.setState({ lang: res.data });
@@ -98,7 +98,19 @@ export class Locale extends Component {
 
 	handleChange = async (e) => {
 		e.preventDefault();
-		// const res = await axios.get('/api/list');
+		if (e.target.value !== '') {
+			console.log(JSON.parse(e.target.value).locale);
+			this.props.setLocale(JSON.parse(e.target.value).locale);
+		} else {
+			this.props.setLocale(null);
+		}
+		// const config = {
+		// 	headers: { 'Content-Type': 'application/json' },
+		// };
+		// const body = JSON.stringify({ countrycode: this.props.countrycode });
+		// console.log('body: ' + body);
+
+		// const res = await axios.post('/api/list', body, config);
 		// console.log(res.data);
 	};
 
@@ -106,43 +118,43 @@ export class Locale extends Component {
 		const { classes } = this.props;
 		return (
 			<Fragment>
-				<Box mt={4}>
-					{/* <Container component='main' maxWidth='md'> */}
-					<Typography component='h1' variant='h6'>
+				{/* <Container component='main' maxWidth='md'> */}
+				{/* <Typography component='h1' variant='h6'>
 						Locale
-					</Typography>
-					{this.state.lang !== null && this.state.lang.length > 0 ? (
-						<FormControl className={classes.formControl}>
-							<InputLabel htmlFor='locale-native-helper'>Locale</InputLabel>
-							<NativeSelect
-								value={this.state.lang.locale}
-								onChange={(e) => this.handleChange(e, e.target.value)}
-								inputProps={{
-									name: 'locale',
-									id: 'locale-native-helper',
-								}}
-							>
-								<option aria-label='None' value='' />
-								{this.state.lang.map((lang) => {
-									return (
-										<option
-											key={lang.langcode}
-											// value={country.countrycode}
-											value={JSON.stringify({
-												langcode: lang.langcode,
-												locale: lang.locale,
-											})}
-										>
-											{lang.langcode}
-										</option>
-									);
-								})}
-							</NativeSelect>
-						</FormControl>
-					) : null}
-					{/* </Container> */}
-				</Box>
-				<Configlist />
+					</Typography> */}
+				{this.state.lang !== null && this.state.lang.length > 0 ? (
+					<FormControl className={classes.formControl}>
+						<InputLabel shrink htmlFor='locale-native-helper'>
+							Locale
+						</InputLabel>
+						<NativeSelect
+							value={this.state.lang.locale}
+							onChange={(e) => this.handleChange(e, e.target.value)}
+							inputProps={{
+								name: 'locale',
+								id: 'locale-native-helper',
+							}}
+						>
+							{/* <option aria-label='None' value='' placeholder='None' /> */}
+							<option value=''>None</option>
+							{this.state.lang.map((lang) => {
+								return (
+									<option
+										key={lang.langcode}
+										// value={country.countrycode}
+										value={JSON.stringify({
+											langcode: lang.localecode, // locale instead of langcode
+											locale: lang.locale,
+										})}
+									>
+										{lang.locale}
+									</option>
+								);
+							})}
+						</NativeSelect>
+					</FormControl>
+				) : null}
+				{/* </Container> */}
 			</Fragment>
 		);
 	}

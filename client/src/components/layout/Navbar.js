@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, AppBar, Typography, Toolbar } from '@material-ui/core';
+import { Button, AppBar, Typography, Toolbar, Box } from '@material-ui/core';
 import { ExitToApp, Person, Input } from '@material-ui/icons';
 import logo from '../../img/ikea-logo.jpg';
 
@@ -81,8 +81,17 @@ const Navbar = ({ isAuthenticated, loading, logout }) => {
 				<Toolbar>
 					<Typography variant='h6' className={classes.title}>
 						<Link to='/'>
-							<img className='ikea-logo' src={logo} alt='IKEA'></img>
+							<Button>
+								<img className='ikea-logo' src={logo} alt='IKEA' />
+							</Button>
 						</Link>
+						{isAuthenticated && (
+							<Link to='/dashboard'>
+								<Button color='inherit' className={classes.menuButton}>
+									Dashboard
+								</Button>
+							</Link>
+						)}
 					</Typography>
 					{!loading && (
 						<Fragment>
