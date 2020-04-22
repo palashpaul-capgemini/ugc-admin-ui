@@ -4,7 +4,8 @@ const { check, validationResult } = require('express-validator');
 const Lang = require('../../models/Lang');
 const CountryLang = require('../../models/CountryLang');
 const auth = require('../../middleware/auth');
-const Role = require('../../models/Role');
+const Sequelize = require('sequelize');
+
 // @rout    GET api/user
 // @desc    Test countries route
 // @access  Private
