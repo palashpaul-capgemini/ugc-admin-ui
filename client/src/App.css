@@ -28,3 +28,10 @@ a {
 ul {
 	list-style: none;
 }
+
+.ikea-logo {
+	position: relative;
+	background: url('./img/ikea-logo.jpg') no-repeat center center/cover;
+	height: auto;
+	width: 64px;
+}
