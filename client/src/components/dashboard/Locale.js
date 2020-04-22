@@ -2,8 +2,14 @@ import React, { Component, Fragment } from 'react';
 import axios from 'axios';
 import {
 	FormControl,
+	Input,
 	InputLabel,
+	MenuItem,
 	NativeSelect,
+	ListItemText,
+	Select,
+	Checkbox,
+	Chip,
 	Container,
 	Typography,
 	Box,
@@ -16,11 +22,33 @@ const styles = (theme) => ({
 	formControl: {
 		margin: theme.spacing(1),
 		minWidth: 120,
+		maxWidth: 300,
 	},
 	selectEmpty: {
 		marginTop: theme.spacing(2),
 	},
+	chips: {
+		display: 'flex',
+		flexWrap: 'wrap',
+	},
+	chip: {
+		margin: 2,
+	},
+	noLabel: {
+		marginTop: theme.spacing(3),
+	},
 });
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+	PaperProps: {
+		style: {
+			maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+			width: 250,
+		},
+	},
+};
 
 export class Locale extends Component {
 	constructor(props) {
@@ -74,7 +102,7 @@ export class Locale extends Component {
 			// 	locale: lang.locale,
 			// });
 			// const res = await axios.post('/api/lang', body, config);
-			const res = await axios.get('/api/listconfig');
+			const res = await axios.get('/api/list');
 			console.log(res.data);
 			// this.setState({ lang: res.data });
 
@@ -126,7 +154,44 @@ export class Locale extends Component {
 								})}
 							</NativeSelect>
 						</FormControl>
-					) : null}
+					) : // 	<Box mt={8}>
+					// <FormControl className={classes.formControl}>
+
+					// 		<InputLabel id='demo-mutiple-chip-label'>Chip</InputLabel>
+					// 		<Select
+					// 			labelId='demo-mutiple-chip-label'
+					// 			id='demo-mutiple-chip'
+					// 			multiple
+					// 			value={this.state.lang}
+					// 			onChange={(e) => this.handleChange(e, e.target.value)}
+					// 			input={<Input id='select-multiple-chip' />}
+					// 			renderValue={(selected) => (
+					// 				<div className={classes.chips}>
+					// 					{this.state.lang.map((value) => (
+					// 						<Chip
+					// 							key={value.locale}
+					// 							label={value.locale}
+					// 							className={classes.chip}
+					// 						/>
+					// 					))}
+					// 				</div>
+					// 			)}
+					// 			MenuProps={MenuProps}
+					// 		>
+					// 			{this.state.lang.map((lang) => (
+					// 				<MenuItem
+					// 					key={lang.locale}
+					// 					value={lang.locale}
+					// 					// style={getStyles(name, personName, theme)}
+					// 				>
+					// 					{lang.locale}
+					// 				</MenuItem>
+					// 			))}
+					// 		</Select>
+
+					// </FormControl>
+					// </Box>
+					null}
 					{/* </Container> */}
 				</Box>
 			</Fragment>
