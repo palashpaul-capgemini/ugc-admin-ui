@@ -15,6 +15,7 @@ import {
 	Container,
 	Typography,
 	Box,
+	List,
 } from '@material-ui/core';
 import { ArrowLeft } from '@material-ui/icons';
 import PropTypes from 'prop-types';
@@ -40,6 +41,23 @@ const styles = (theme) => ({
 	},
 	noLabel: {
 		marginTop: theme.spacing(3),
+	},
+	list: {
+		margin: theme.spacing(1),
+		width: '100%',
+		minWidth: 120,
+		maxWidth: 300,
+		height: 400,
+		// itemSize: 46,
+		// itemCount: 200,
+	},
+	boxList: {
+		margin: theme.spacing(1),
+		width: '100%',
+		minWidth: 120,
+		maxWidth: 300,
+		maxHeight: 150,
+		overflow: 'auto',
 	},
 });
 
@@ -67,7 +85,11 @@ export class Savedlist extends Component {
 			this.getConfiglist();
 		}
 		if (prevProps.locale !== this.props.locale) {
-			this.setState({ message: null });
+			this.setState((prevState) => ({
+				...prevState,
+				message: null,
+				setlocaleSelections: [],
+			}));
 			this.getConfiglist();
 		}
 		if (
@@ -224,11 +246,20 @@ export class Savedlist extends Component {
 							>
 								Remove
 							</Button>
-							{this.state.message !== null && this.state.message}
+							{this.state.message !== null && (
+								<Box mt={2} mb={2} spacing={1}>
+									<Chip
+										fullWidth
+										variant='contained'
+										color='secondary'
+										label={this.state.message}
+									/>
+								</Box>
+							)}
 						</Grid>
 					</Grid>
 				</FormControl>
-				<Grid item xs={12}>
+				{/* <Grid item xs={12}>
 					<Box className={classes.formControl}>
 						{this.state.setlocaleSelections.map((setlocale, index) => (
 							<Chip
@@ -238,6 +269,21 @@ export class Savedlist extends Component {
 								variant='outlined'
 							/>
 						))}
+					</Box>
+				</Grid> */}
+				<Grid item xs={12}>
+					<Box className={classes.boxList}>
+						<List clasName={classes.list}>
+							{this.state.setlocaleSelections.length > 0 &&
+								this.state.setlocaleSelections.map((setlocale, index) => (
+									<Chip
+										key={index}
+										label={setlocale}
+										className={classes.chip}
+										variant='outlined'
+									/>
+								))}
+						</List>
 					</Box>
 				</Grid>
 			</Fragment>

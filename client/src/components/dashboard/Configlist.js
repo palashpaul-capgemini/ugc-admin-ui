@@ -15,7 +15,9 @@ import {
 	Container,
 	Typography,
 	Box,
+	Card,
 	Paper,
+	List,
 } from '@material-ui/core';
 import { ArrowRight } from '@material-ui/icons';
 import PropTypes from 'prop-types';
@@ -41,6 +43,23 @@ const styles = (theme) => ({
 	},
 	noLabel: {
 		marginTop: theme.spacing(3),
+	},
+	list: {
+		margin: theme.spacing(1),
+		width: '100%',
+		minWidth: 120,
+		maxWidth: 300,
+		height: 400,
+		// itemSize: 46,
+		// itemCount: 200,
+	},
+	boxList: {
+		margin: theme.spacing(1),
+		width: '100%',
+		minWidth: 120,
+		maxWidth: 300,
+		maxHeight: 150,
+		overflow: 'auto',
 	},
 });
 
@@ -98,9 +117,12 @@ export class Configlist extends Component {
 		const value = [];
 		for (let i = 0, l = options.length; i < l; i += 1) {
 			if (options[i].selected) {
-				value.push(options[i].value);
+				// value.push(options[i].value);
+				const string = options[i].value;
+				value.push(string);
 			}
 		}
+		console.log(value);
 		this.setState({ selectionList: value });
 	};
 
@@ -112,8 +134,16 @@ export class Configlist extends Component {
 			const body = JSON.stringify({ countrycode: this.props.countrycode });
 			console.log('body: ' + body);
 			const res = await axios.post('/api/list', body, config);
+			console.log('congig list: ');
 			console.log(res.data);
-			const list = res.data.map((item) => item.countrycode);
+			const list = res.data.map((item) => {
+				return {
+					countryname: item.countryname,
+					countrycode: item.langlookup.countrycode,
+					langcode: item.langlookup.langcode,
+					locale: item.langlookup.locale,
+				};
+			});
 			// this.setState({ configlist: res.data });
 			this.setState((prevState) => ({
 				...prevState,
@@ -127,14 +157,22 @@ export class Configlist extends Component {
 
 	deselectAll = (e) => {
 		e.preventDefault();
+		this.setState({ selectionList: [] });
 		console.log('Deselect all');
 	};
 
 	selectAll = (e) => {
 		e.preventDefault();
-		const options = e.target.options;
-		console.log(options);
+		const allList = this.state.configlistAll.map((item) => {
+			return JSON.stringify({
+				countryname: item.countryname,
+				countrycode: item.langlookup.countrycode,
+				langcode: item.langlookup.langcode,
+				locale: item.langlookup.locale,
+			});
+		});
 
+		this.setState({ selectionList: allList });
 		console.log('Select all');
 	};
 
@@ -146,11 +184,16 @@ export class Configlist extends Component {
 			this.setState({ message: null });
 			const configlist = [];
 
+			// this.state.selectionList.map((item) => {
+			// 	return this.state.configlistAll.filter(
+			// 		(config) =>
+			// 			item === config.countrycode &&
+			// 			configlist.push(config.langlookup.locale)
+			// 	);
+			// });
+
 			this.state.selectionList.map((item) => {
-				return this.state.configlistAll.filter(
-					(config) =>
-						item === config.countrycode && configlist.push(config.locale)
-				);
+				configlist.push(JSON.parse(item).locale);
 			});
 			console.log(configlist);
 			try {
@@ -181,18 +224,9 @@ export class Configlist extends Component {
 		const { classes } = this.props;
 		return (
 			<Fragment>
-				{/* {this.state.configlist !== null &&
-					this.state.configlist.length > 0 &&
-					this.state.configlist.map((list) => {
-						return (
-							<option key={list.locale}>
-								{list.langcode} | {list.countrycode} | {list.locale}
-							</option>
-						);
-					})} */}
 				<FormControl className={classes.formControl}>
 					<InputLabel shrink htmlFor='select-multiple-native'>
-						Country code
+						Country | Language code
 					</InputLabel>
 					<Select
 						multiple
@@ -203,9 +237,23 @@ export class Configlist extends Component {
 							id: 'select-multiple-native',
 						}}
 					>
-						{this.state.optionList.map((name, index) => (
-							<option key={index} value={name}>
-								{name}
+						{this.state.optionList.map((item, index) => (
+							<option
+								key={index}
+								value={JSON.stringify({
+									countryname: item.countryname,
+									countrycode: item.countrycode,
+									langcode: item.langcode,
+									locale: item.locale,
+								})}
+							>
+								{[
+									item.countryname,
+									', ',
+									item.countrycode,
+									' | ',
+									item.langcode,
+								]}
 							</option>
 						))}
 					</Select>
@@ -247,16 +295,37 @@ export class Configlist extends Component {
 							>
 								Add
 							</Button>
-							{this.state.message !== null && this.state.message}
+							{this.state.message !== null && (
+								<Box mt={2} mb={2} spacing={1}>
+									<Chip
+										fullWidth
+										variant='contained'
+										color='secondary'
+										label={this.state.message}
+									/>
+								</Box>
+							)}
 						</Grid>
 					</Grid>
 				</FormControl>
 				<Grid item xs={12}>
-					<Box className={classes.formControl}>
-						{this.state.selectionList.length > 0 &&
-							this.state.selectionList.map((selection, index) => (
-								<Chip key={index} label={selection} className={classes.chip} />
-							))}
+					<Box className={classes.boxList}>
+						<List clasName={classes.list}>
+							{this.state.selectionList.length > 0 &&
+								this.state.selectionList.map((selection, index) => (
+									<Chip
+										key={index}
+										label={[
+											JSON.parse(selection).countryname,
+											', ',
+											JSON.parse(selection).countrycode,
+											' | ',
+											JSON.parse(selection).langcode,
+										]}
+										className={classes.chip}
+									/>
+								))}
+						</List>
 					</Box>
 				</Grid>
 			</Fragment>

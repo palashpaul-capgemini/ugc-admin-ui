@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 const Lang = require('../../models/Lang');
 const auth = require('../../middleware/auth');
 const CountryLang = require('../../models/CountryLang');
+const Country = require('../../models/Country');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
@@ -35,6 +36,7 @@ router.post('/', auth, async (req, res) => {
 				filter.push(element.dataValues.setlocale);
 			});
 		});
+		var input = [];
 		await Lang.findAll({
 			where: {
 				enable: constraint,
@@ -43,6 +45,25 @@ router.post('/', auth, async (req, res) => {
 				},
 			},
 			attributes: ['langcode', 'countrycode', 'locale'],
+		}).then((countries) => {
+			//res.status(200).json(countries);
+			countries.forEach((country) => {
+				input.push(country.countrycode);
+			});
+		});
+		console.log(input);
+		await Country.findAll({
+			include: [
+				{
+					model: Lang,
+					where: {
+						enable: 'true',
+						countrycode: input,
+					},
+					attributes: ['countrycode', 'langcode', 'locale'],
+				},
+			],
+			attributes: ['countryname', 'countrycode'],
 		}).then((countries) => {
 			res.status(200).json(countries);
 		});
