@@ -62,7 +62,7 @@ router.post('/', auth, async (req, res) => {
                     attributes: ['countrycode','langcode','locale']
 				},
 			],
-			attributes: ['countryname'],
+			attributes: ['countryname','countrycode'],
 		}).then((countries) => {
 			res.status(200).json(countries);
 		});
