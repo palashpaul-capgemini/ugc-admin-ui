@@ -128,12 +128,11 @@ export class Savedlist extends Component {
 				const body = JSON.stringify({
 					countrycode: this.props.countrycode,
 					locale: this.props.locale,
-					// configlist: this.state.setlocaleSelections,
-					setlocale: this.state.setlocaleSelections[0],
+					configlist: this.state.setlocaleSelections,
 				});
 				console.log('body: ' + body);
 
-				const res = await axios.delete('/api/config/delete', body, config);
+				const res = await axios.post('/api/config/delete', body, config);
 				console.log(res.data);
 			} catch (error) {
 				console.error(error);
