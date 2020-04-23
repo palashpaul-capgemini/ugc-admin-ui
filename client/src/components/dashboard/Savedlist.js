@@ -4,16 +4,9 @@ import {
 	FormControl,
 	Grid,
 	Button,
-	Input,
 	InputLabel,
-	MenuItem,
-	NativeSelect,
-	ListItemText,
 	Select,
-	Checkbox,
 	Chip,
-	Container,
-	Typography,
 	Box,
 	List,
 } from '@material-ui/core';
@@ -66,17 +59,22 @@ export class Savedlist extends Component {
 		super(props);
 		this.state = {
 			configlistAll: [],
-			setlocaleSelections: [],
+			selectionList: [],
+			optionList: [], //now
+
 			message: null,
 			isUpdate: false,
 		};
 
 		this.getConfiglist = this.getConfiglist.bind(this);
 		this.handleChangeMultiple = this.handleChangeMultiple.bind(this);
+		this.deselectAll = this.deselectAll.bind(this);
+		this.selectAll = this.selectAll.bind(this);
 		this.removeSelected = this.removeSelected.bind(this);
 	}
 
 	componentDidMount() {
+		console.log(this.props.locale);
 		this.getConfiglist();
 	}
 
@@ -88,19 +86,15 @@ export class Savedlist extends Component {
 			this.setState((prevState) => ({
 				...prevState,
 				message: null,
-				setlocaleSelections: [],
+				selectionList: [],
 			}));
 			this.getConfiglist();
 		}
-		if (
-			// prevState.isUpdate !== this.state.isUpdate ||
-			prevProps.refresh !== this.props.refresh
-		) {
-			// this.setState({ isUpdate: false });
+		if (prevProps.refresh !== this.props.refresh) {
 			this.setState((prevState) => ({
 				...prevState,
 				isUpdate: false,
-				setlocaleSelections: [],
+				selectionList: [],
 			}));
 			this.props.setUpdated(false);
 			this.getConfiglist();
@@ -113,11 +107,12 @@ export class Savedlist extends Component {
 		const value = [];
 		for (let i = 0, l = options.length; i < l; i += 1) {
 			if (options[i].selected) {
-				// value.push(options[i].value);
-				value.push(options[i].value);
+				const string = options[i].value;
+				value.push(string);
 			}
 		}
-		this.setState({ setlocaleSelections: value });
+		console.log(value);
+		this.setState({ selectionList: value });
 	};
 
 	getConfiglist = async () => {
@@ -128,36 +123,68 @@ export class Savedlist extends Component {
 			const body = JSON.stringify({ countrycode: this.props.countrycode });
 			console.log('body: ' + body);
 			const res = await axios.post('/api/config', body, config);
+			console.log('saved list');
 			console.log(res.data);
+			const list = res.data.map((item) => {
+				return {
+					// countryname: item.countryname,
+					countrycode: item.countrycode,
+					locale: item.locale,
+					setlocale: item.setlocale,
+				};
+			});
 
 			this.setState((prevState) => ({
 				...prevState,
 				configlistAll: res.data,
+				optionList: list,
 			}));
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
+	deselectAll = (e) => {
+		e.preventDefault();
+		this.setState({ selectionList: [] });
+		console.log('Deselect all');
+	};
+
+	selectAll = (e) => {
+		e.preventDefault();
+		const allList = this.state.configlistAll.map((item) => {
+			return JSON.stringify({
+				// countryname: item.countryname,
+				countrycode: item.countrycode,
+				locale: item.locale,
+				setlocale: item.setlocale,
+			});
+		});
+
+		this.setState({ selectionList: allList });
+		console.log('Select all');
+	};
+
 	removeSelected = async (e) => {
 		e.preventDefault();
 
-		if (
-			this.state.setlocaleSelections.length > 0 &&
-			this.props.locale !== null
-		) {
+		if (this.state.selectionList.length > 0 && this.props.locale !== null) {
 			console.log('Remove Selected');
-			console.log(this.state.setlocaleSelections);
 			this.setState({ message: null });
-			// const configlist = [];
+			const configlist = [];
+
 			// console.log(this.state.configlistAll);
-			// this.state.setlocaleSelections.map((setlocale) => {
+			// this.state.selectionList.map((setlocale) => {
 			// 	return this.state.configlistAll.filter(
 			// 		(config) =>
 			// 			setlocale === config.setlocale && configlist.push(config.setlocale)
 			// 	);
 			// });
-			// console.log(configlist);
+
+			this.state.selectionList.map((item) => {
+				configlist.push(JSON.parse(item).setlocale);
+			});
+			console.log(configlist);
 			try {
 				const config = {
 					headers: { 'Content-Type': 'application/json' },
@@ -165,7 +192,7 @@ export class Savedlist extends Component {
 				const body = JSON.stringify({
 					countrycode: this.props.countrycode,
 					locale: this.props.locale,
-					configlist: this.state.setlocaleSelections,
+					configlist: configlist,
 				});
 				console.log('body: ' + body);
 
@@ -193,19 +220,32 @@ export class Savedlist extends Component {
 					<Select
 						multiple
 						native
-						value={this.props.configlistAll}
+						value={this.state.selectionList}
 						onChange={this.handleChangeMultiple}
 						inputProps={{
 							id: 'select-multiple-native',
 						}}
 					>
-						{this.state.configlistAll !== null &&
-							this.state.configlistAll.length > 0 &&
-							this.state.configlistAll.map(
-								(config, index) =>
-									config.locale === this.props.locale && (
-										<option key={index} value={config.setlocale}>
-											{config.setlocale}
+						{this.state.optionList.length > 0 &&
+							this.state.optionList.map(
+								(item, index) =>
+									item.locale === this.props.locale && (
+										<option
+											key={index}
+											value={JSON.stringify({
+												// countryname: item.countryname,
+												countrycode: item.countrycode,
+												locale: item.locale,
+												setlocale: item.setlocale,
+											})}
+										>
+											{[
+												// item.countryname,
+												// ', ',
+												item.countrycode,
+												' | ',
+												item.setlocale,
+											]}
 										</option>
 									)
 							)}
@@ -218,6 +258,7 @@ export class Savedlist extends Component {
 									fullWidth
 									variant='contained'
 									color='primary'
+									onClick={(e) => this.selectAll(e)}
 								>
 									All
 								</Button>
@@ -230,6 +271,7 @@ export class Savedlist extends Component {
 									fullWidth
 									variant='contained'
 									color='primary'
+									onClick={(e) => this.deselectAll(e)}
 								>
 									None
 								</Button>
@@ -248,12 +290,7 @@ export class Savedlist extends Component {
 							</Button>
 							{this.state.message !== null && (
 								<Box mt={2} mb={2} spacing={1}>
-									<Chip
-										fullWidth
-										variant='contained'
-										color='secondary'
-										label={this.state.message}
-									/>
+									<Chip color='secondary' label={this.state.message} />
 								</Box>
 							)}
 						</Grid>
@@ -261,7 +298,7 @@ export class Savedlist extends Component {
 				</FormControl>
 				{/* <Grid item xs={12}>
 					<Box className={classes.formControl}>
-						{this.state.setlocaleSelections.map((setlocale, index) => (
+						{this.state.selectionList.map((setlocale, index) => (
 							<Chip
 								key={index}
 								label={setlocale}
@@ -271,16 +308,39 @@ export class Savedlist extends Component {
 						))}
 					</Box>
 				</Grid> */}
-				<Grid item xs={12}>
+
+				{/* <Grid item xs={12}>
 					<Box className={classes.boxList}>
-						<List clasName={classes.list}>
-							{this.state.setlocaleSelections.length > 0 &&
-								this.state.setlocaleSelections.map((setlocale, index) => (
+						<List>
+							{this.state.selectionList.length > 0 &&
+								this.state.selectionList.map((setlocale, index) => (
 									<Chip
 										key={index}
 										label={setlocale}
 										className={classes.chip}
 										variant='outlined'
+									/>
+								))}
+						</List>
+					</Box>
+				</Grid> */}
+
+				<Grid item xs={12}>
+					<Box className={classes.boxList}>
+						<List>
+							{this.props.locale !== null &&
+								this.state.selectionList.length > 0 &&
+								this.state.selectionList.map((selection, index) => (
+									<Chip
+										key={index}
+										label={[
+											// JSON.parse(selection).countryname,
+											// ', ',
+											JSON.parse(selection).countrycode,
+											' | ',
+											JSON.parse(selection).setlocale,
+										]}
+										className={classes.chip}
 									/>
 								))}
 						</List>

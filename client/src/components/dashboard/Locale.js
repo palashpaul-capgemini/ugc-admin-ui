@@ -71,6 +71,7 @@ export class Locale extends Component {
 	componentDidUpdate(prevProps, prevState) {
 		if (prevProps.country !== this.props.country) {
 			this.getLocale();
+			this.props.setLocale(null);
 		}
 	}
 

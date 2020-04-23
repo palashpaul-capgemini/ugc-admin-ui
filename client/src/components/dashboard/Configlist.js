@@ -4,19 +4,10 @@ import {
 	FormControl,
 	Grid,
 	Button,
-	Input,
 	InputLabel,
-	MenuItem,
-	NativeSelect,
-	ListItemText,
 	Select,
-	Checkbox,
 	Chip,
-	Container,
-	Typography,
 	Box,
-	Card,
-	Paper,
 	List,
 } from '@material-ui/core';
 import { ArrowRight } from '@material-ui/icons';
@@ -71,7 +62,6 @@ export class Configlist extends Component {
 			configlist: [],
 			selectionList: [],
 			optionList: [],
-			countries: this.props.countries,
 			message: null,
 			isUpdate: false,
 		};
@@ -84,7 +74,6 @@ export class Configlist extends Component {
 	}
 
 	componentDidMount() {
-		console.log(this.props.locale);
 		this.getConfiglist();
 	}
 
@@ -93,14 +82,14 @@ export class Configlist extends Component {
 			this.getConfiglist();
 		}
 		if (prevProps.locale !== this.props.locale) {
-			this.setState({ message: null });
+			this.setState((prevState) => ({
+				...prevState,
+				message: null,
+				selectionList: [],
+			}));
 			this.getConfiglist();
 		}
-		if (
-			// prevState.isUpdate !== this.state.isUpdate ||
-			prevProps.refresh !== this.props.refresh
-		) {
-			// this.setState({ isUpdate: false });
+		if (prevProps.refresh !== this.props.refresh) {
 			this.setState((prevState) => ({
 				...prevState,
 				isUpdate: false,
@@ -117,7 +106,6 @@ export class Configlist extends Component {
 		const value = [];
 		for (let i = 0, l = options.length; i < l; i += 1) {
 			if (options[i].selected) {
-				// value.push(options[i].value);
 				const string = options[i].value;
 				value.push(string);
 			}
@@ -134,7 +122,7 @@ export class Configlist extends Component {
 			const body = JSON.stringify({ countrycode: this.props.countrycode });
 			console.log('body: ' + body);
 			const res = await axios.post('/api/list', body, config);
-			console.log('congig list: ');
+			console.log('config list: ');
 			console.log(res.data);
 			const list = res.data.map((item) => {
 				return {
@@ -144,7 +132,7 @@ export class Configlist extends Component {
 					locale: item.langlookup.locale,
 				};
 			});
-			// this.setState({ configlist: res.data });
+
 			this.setState((prevState) => ({
 				...prevState,
 				configlistAll: res.data,
@@ -237,25 +225,26 @@ export class Configlist extends Component {
 							id: 'select-multiple-native',
 						}}
 					>
-						{this.state.optionList.map((item, index) => (
-							<option
-								key={index}
-								value={JSON.stringify({
-									countryname: item.countryname,
-									countrycode: item.countrycode,
-									langcode: item.langcode,
-									locale: item.locale,
-								})}
-							>
-								{[
-									item.countryname,
-									', ',
-									item.countrycode,
-									' | ',
-									item.langcode,
-								]}
-							</option>
-						))}
+						{this.state.optionList.length > 0 &&
+							this.state.optionList.map((item, index) => (
+								<option
+									key={index}
+									value={JSON.stringify({
+										countryname: item.countryname,
+										countrycode: item.countrycode,
+										langcode: item.langcode,
+										locale: item.locale,
+									})}
+								>
+									{[
+										item.countryname,
+										', ',
+										item.countrycode,
+										' | ',
+										item.langcode,
+									]}
+								</option>
+							))}
 					</Select>
 					<Grid container spacing={2}>
 						<Grid item xs={6}>
@@ -297,12 +286,7 @@ export class Configlist extends Component {
 							</Button>
 							{this.state.message !== null && (
 								<Box mt={2} mb={2} spacing={1}>
-									<Chip
-										fullWidth
-										variant='contained'
-										color='secondary'
-										label={this.state.message}
-									/>
+									<Chip color='secondary' label={this.state.message} />
 								</Box>
 							)}
 						</Grid>
@@ -310,7 +294,7 @@ export class Configlist extends Component {
 				</FormControl>
 				<Grid item xs={12}>
 					<Box className={classes.boxList}>
-						<List clasName={classes.list}>
+						<List>
 							{this.state.selectionList.length > 0 &&
 								this.state.selectionList.map((selection, index) => (
 									<Chip

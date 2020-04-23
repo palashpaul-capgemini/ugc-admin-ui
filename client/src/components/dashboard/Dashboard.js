@@ -28,6 +28,8 @@ import Configlist from './Configlist';
 import Savedlist from './Savedlist';
 import Locale from './Locale';
 
+import { setAuthToken } from '../../utils/setAuthToken';
+
 const styles = (theme) => ({
 	formControl: {
 		margin: theme.spacing(1),
@@ -64,6 +66,9 @@ export class Dashboard extends Component {
 	};
 
 	componentDidMount() {
+		if (localStorage.token) {
+			setAuthToken(localStorage.token);
+		}
 		this.getCountires();
 	}
 
