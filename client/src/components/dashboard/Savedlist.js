@@ -50,6 +50,7 @@ export class Savedlist extends Component {
 			configlistAll: [],
 			setlocaleSelections: [],
 			message: null,
+			isUpdate: false,
 		};
 
 		this.getConfiglist = this.getConfiglist.bind(this);
@@ -67,6 +68,20 @@ export class Savedlist extends Component {
 		}
 		if (prevProps.locale !== this.props.locale) {
 			this.setState({ message: null });
+			this.getConfiglist();
+		}
+		if (
+			// prevState.isUpdate !== this.state.isUpdate ||
+			prevProps.refresh !== this.props.refresh
+		) {
+			// this.setState({ isUpdate: false });
+			this.setState((prevState) => ({
+				...prevState,
+				isUpdate: false,
+				setlocaleSelections: [],
+			}));
+			this.props.setUpdated(false);
+			this.getConfiglist();
 		}
 	}
 
@@ -134,6 +149,8 @@ export class Savedlist extends Component {
 
 				const res = await axios.post('/api/config/delete', body, config);
 				console.log(res.data);
+				this.setState({ isUpdate: true });
+				this.props.setUpdated(true);
 			} catch (error) {
 				console.error(error);
 			}

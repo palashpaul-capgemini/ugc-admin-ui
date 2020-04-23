@@ -75,14 +75,19 @@ export class Configlist extends Component {
 		}
 		if (prevProps.locale !== this.props.locale) {
 			this.setState({ message: null });
+			this.getConfiglist();
 		}
-		if (prevState.isUpdate !== this.state.isUpdate) {
+		if (
+			// prevState.isUpdate !== this.state.isUpdate ||
+			prevProps.refresh !== this.props.refresh
+		) {
 			// this.setState({ isUpdate: false });
 			this.setState((prevState) => ({
 				...prevState,
 				isUpdate: false,
 				selectionList: [],
 			}));
+			this.props.setUpdated(false);
 			this.getConfiglist();
 		}
 	}
@@ -162,6 +167,7 @@ export class Configlist extends Component {
 				const res = await axios.post('/api/config/save', body, config);
 				console.log(res.data);
 				this.setState({ isUpdate: true });
+				this.props.setUpdated(true);
 			} catch (error) {
 				console.error(error);
 			}

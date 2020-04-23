@@ -49,11 +49,13 @@ export class Dashboard extends Component {
 			countrycode: null,
 			lang: [],
 			locale: null,
+			refresh: false,
 		};
 
 		this.getCountires = this.getCountires.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.setLocale = this.setLocale.bind(this);
+		this.setUpdated = this.setUpdated.bind(this);
 	}
 
 	setLocale = (locale) => {
@@ -77,6 +79,10 @@ export class Dashboard extends Component {
 	componentDidUpdate(prevProps, prevState) {
 		if (prevState.locale !== this.state.locale) {
 			console.log(this.state.locale);
+		}
+		if (prevState.refresh !== this.state.refresh) {
+			console.log('refresh from Dashboard didupdate');
+			this.getCountires();
 		}
 	}
 
@@ -117,6 +123,10 @@ export class Dashboard extends Component {
 				countrycode: null,
 			}));
 		}
+	};
+
+	setUpdated = (bool) => {
+		this.setState({ refresh: bool });
 	};
 
 	render() {
@@ -177,12 +187,16 @@ export class Dashboard extends Component {
 										<Configlist
 											countrycode={this.state.countrycode}
 											locale={this.state.locale}
+											setUpdated={this.setUpdated}
+											refresh={this.state.refresh}
 										/>
 									</Grid>
 									<Grid item xs={6} md={3}>
 										<Savedlist
 											countrycode={this.state.countrycode}
 											locale={this.state.locale}
+											setUpdated={this.setUpdated}
+											refresh={this.state.refresh}
 										/>
 									</Grid>
 								</Fragment>
