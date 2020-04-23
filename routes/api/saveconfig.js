@@ -57,7 +57,7 @@ router.post('/save', auth , async(req,res)=>{
 		res.status(500).send(`Server error: ${error}`);
 	}
 });
-router.delete('/delete', auth, async(req,res)=>{
+router.post('/delete', auth, async(req,res)=>{
 	var countrycode = req.body.countrycode;
 	var locale = req.body.locale;
 	var constraint = req.body.configlist;

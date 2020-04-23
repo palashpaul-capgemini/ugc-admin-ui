@@ -4,9 +4,9 @@ const { check, validationResult } = require('express-validator');
 const Lang = require('../../models/Lang');
 const auth = require('../../middleware/auth');
 const CountryLang = require('../../models/CountryLang');
+const Country = require('../../models/Country');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op
-
 
 //const Pool = require('pg').Pool
 //const connectionString = 'postgresql://usercontent:usercontent123@34.76.202.103:5432/usercontent'
@@ -36,6 +36,7 @@ router.post('/', auth, async (req, res) => {
             filter.push(element.dataValues.setlocale);
         })
     }); 
+    var input = [];
 		await Lang.findAll({
             where : {
                 enable : constraint,
@@ -44,8 +45,27 @@ router.post('/', auth, async (req, res) => {
                 }
             },attributes:['langcode','countrycode','locale']
         }).then((countries)=>{
-            res.status(200).json(countries);
+            //res.status(200).json(countries);
+            countries.forEach(country => {
+                input.push(country.countrycode);
         })
+    });
+        console.log(input);
+        await Country.findAll({
+			include: [
+				{
+                    model: Lang,
+                    where :{
+                        enable :'true',
+                        countrycode : input
+                    },
+                    attributes: ['countrycode','langcode','locale']
+				},
+			],
+			attributes: ['countryname'],
+		}).then((countries) => {
+			res.status(200).json(countries);
+		});
 	} catch (error) {
 		console.error(error.message);
 		res.status(500).send(`Server error: ${error}`);
