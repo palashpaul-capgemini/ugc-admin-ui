@@ -84,6 +84,9 @@ export class Dashboard extends Component {
 			console.log('refresh from Dashboard didupdate');
 			this.getCountires();
 		}
+		if (prevState.countires === null) {
+			this.getCountires();
+		}
 	}
 
 	handleChange = async (e, countryString) => {
