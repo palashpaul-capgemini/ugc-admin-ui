@@ -59,11 +59,14 @@ router.post('/', auth, async (req, res) => {
 					where: {
 						enable: 'true',
 						countrycode: input,
+						locale: {
+							[Op.notIn]: filter,
+						},
 					},
 					attributes: ['countrycode', 'langcode', 'locale'],
 				},
 			],
-			attributes: ['countryname', 'countrycode'],
+			attributes: ['countryname'],
 		}).then((countries) => {
 			res.status(200).json(countries);
 		});

@@ -120,19 +120,25 @@ export class Savedlist extends Component {
 			const config = {
 				headers: { 'Content-Type': 'application/json' },
 			};
-			const body = JSON.stringify({ countrycode: this.props.countrycode });
+			const body = JSON.stringify({
+				countrycode: this.props.countrycode,
+				locale: this.props.locale,
+			});
 			console.log('body: ' + body);
 			const res = await axios.post('/api/config', body, config);
 			console.log('saved list');
 			console.log(res.data);
 			const list = res.data.map((item) => {
+				console.log(item);
 				return {
-					// countryname: item.countryname,
-					countrycode: item.countrycode,
-					locale: item.locale,
-					setlocale: item.setlocale,
+					countryname: item.countryname,
+					countrycode: item.langlookup.countrycode,
+					langcode: item.langlookup.langcode,
+					locale: item.langlookup.locale,
+					// setlocale: item.langlookup.setlocale,
 				};
 			});
+			console.log(list);
 
 			this.setState((prevState) => ({
 				...prevState,
@@ -154,10 +160,10 @@ export class Savedlist extends Component {
 		e.preventDefault();
 		const allList = this.state.configlistAll.map((item) => {
 			return JSON.stringify({
-				// countryname: item.countryname,
-				countrycode: item.countrycode,
-				locale: item.locale,
-				setlocale: item.setlocale,
+				countryname: item.countryname,
+				countrycode: item.langlookup.countrycode,
+				langcode: item.langlookup.langcode,
+				locale: item.langlookup.locale,
 			});
 		});
 
@@ -182,7 +188,7 @@ export class Savedlist extends Component {
 			// });
 
 			this.state.selectionList.map((item) => {
-				configlist.push(JSON.parse(item).setlocale);
+				configlist.push(JSON.parse(item).locale);
 			});
 			console.log(configlist);
 			try {
@@ -227,28 +233,26 @@ export class Savedlist extends Component {
 						}}
 					>
 						{this.state.optionList.length > 0 &&
-							this.state.optionList.map(
-								(item, index) =>
-									item.locale === this.props.locale && (
-										<option
-											key={index}
-											value={JSON.stringify({
-												// countryname: item.countryname,
-												countrycode: item.countrycode,
-												locale: item.locale,
-												setlocale: item.setlocale,
-											})}
-										>
-											{[
-												// item.countryname,
-												// ', ',
-												item.countrycode,
-												' | ',
-												item.setlocale,
-											]}
-										</option>
-									)
-							)}
+							this.state.optionList.map((item, index) => (
+								// item.locale === this.props.locale &&
+								<option
+									key={index}
+									value={JSON.stringify({
+										countryname: item.countryname,
+										countrycode: item.countrycode,
+										langcode: item.langcode,
+										locale: item.locale,
+									})}
+								>
+									{[
+										item.countryname,
+										', ',
+										item.countrycode,
+										' | ',
+										item.langcode,
+									]}
+								</option>
+							))}
 					</Select>
 					<Grid container spacing={2}>
 						<Grid item xs={6}>
@@ -334,11 +338,11 @@ export class Savedlist extends Component {
 									<Chip
 										key={index}
 										label={[
-											// JSON.parse(selection).countryname,
-											// ', ',
+											JSON.parse(selection).countryname,
+											', ',
 											JSON.parse(selection).countrycode,
 											' | ',
-											JSON.parse(selection).setlocale,
+											JSON.parse(selection).langcode,
 										]}
 										className={classes.chip}
 									/>

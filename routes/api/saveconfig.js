@@ -3,6 +3,10 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const CountryLang = require('../../models/CountryLang');
 const auth = require('../../middleware/auth');
+const Country = require('../../models/Country');
+const Lang = require('../../models/Lang');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 // @rout    GET api/user
 // @desc    Test countries route
@@ -14,10 +18,48 @@ router.post('/', auth, async (req, res) => {
 		if (!req.body.countrycode) {
 			return res.status(400).json({ errors: 'Invalid CountryCode' });
 		}
+		var filter = [];
 		await CountryLang.findAll({
+			attributes: ['setlocale'],
 			where: {
 				countrycode: req.body.countrycode,
 			},
+		}).then((result) => {
+			result.forEach((element) => {
+				filter.push(element.setlocale);
+			});
+		});
+		console.log(filter);
+		var input = [];
+		await Lang.findAll({
+			where: {
+				enable: 'true',
+				locale: {
+					[Op.in]: filter,
+				},
+			},
+			attributes: ['langcode', 'countrycode', 'locale'],
+		}).then((countries) => {
+			countries.forEach((country) => {
+				input.push(country.countrycode);
+			});
+		});
+		console.log(input);
+		await Country.findAll({
+			include: [
+				{
+					model: Lang,
+					where: {
+						enable: 'true',
+						countrycode: input,
+						locale: {
+							[Op.in]: filter,
+						},
+					},
+					attributes: ['countrycode', 'langcode', 'locale'],
+				},
+			],
+			attributes: ['countryname', 'countrycode'],
 		}).then((countries) => {
 			res.status(200).json(countries);
 		});
