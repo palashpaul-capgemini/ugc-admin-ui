@@ -75,7 +75,9 @@ export class Savedlist extends Component {
 
 	componentDidMount() {
 		console.log(this.props.locale);
-		this.getConfiglist();
+		if (this.props.locale !== null) {
+			this.getConfiglist();
+		}
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -125,7 +127,7 @@ export class Savedlist extends Component {
 				locale: this.props.locale,
 			});
 			console.log('body: ' + body);
-			const res = await axios.post('/api/config', body, config);
+			const res = await axios.post('/api/config/savelocale', body, config);
 			console.log('saved list');
 			console.log(res.data);
 			const list = res.data.map((item) => {
