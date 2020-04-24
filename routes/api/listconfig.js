@@ -57,7 +57,10 @@ router.post('/', auth, async (req, res) => {
                     model: Lang,
                     where :{
                         enable :'true',
-                        countrycode : input
+                        countrycode : input,
+                        locale :{
+							[Op.notIn]  : filter,
+					  }
                     },
                     attributes: ['countrycode','langcode','locale']
 				},
