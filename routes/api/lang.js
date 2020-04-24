@@ -13,15 +13,15 @@ const Sequelize = require('sequelize');
 
 router.post('/', auth, async (req, res) => {
 	try {
-		if(!req.body.countrycode){
+		if (!req.body.countrycode) {
 			return res.status(400).json({ errors: 'Please select countrycode' });
 		}
 		const result = await Lang.findAll({
-					where:{
-						countrycode : req.body.countrycode,
-					},
-					attributes:['langcode','locale']  
-			});
+			where: {
+				countrycode: req.body.countrycode,
+			},
+			attributes: ['langcode', 'locale'],
+		});
 		res.status(200).json(result);
 	} catch (error) {
 		console.error(error.message);
@@ -30,7 +30,7 @@ router.post('/', auth, async (req, res) => {
 });
 module.exports = router;
 
-	  	/*const roleid = req.user.roleid;
+/*const roleid = req.user.roleid;
 		await Lang.findAll({
 			include: [
 			  {

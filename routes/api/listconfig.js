@@ -6,24 +6,29 @@ const auth = require('../../middleware/auth');
 const CountryLang = require('../../models/CountryLang');
 const Country = require('../../models/Country');
 const Sequelize = require('sequelize');
+<<<<<<< HEAD
 const Op = Sequelize.Op
+=======
+const Op = Sequelize.Op;
+>>>>>>> 0108354e59f9788439ef1cfd9a0fdaf9530189cb
 
 //const Pool = require('pg').Pool
 //const connectionString = 'postgresql://usercontent:usercontent123@34.76.202.103:5432/usercontent'
 //const pool = new Pool({
 //connectionString : connectionString
 //})
-  
+
 // @rout    GET api/user
 // @desc    Test countries route
 // @access  Private
 //router.get('/', (req, res) => res.send('ListConfig route'));
 router.post('/', auth, async (req, res) => {
 	try {
-        var countrycode = req.body.countrycode;
-        var constraint = 'true';
-        if(!countrycode){
+		var countrycode = req.body.countrycode;
+		var constraint = 'true';
+		if (!countrycode) {
 			return res.status(400).json({ errors: 'Invalid CountryCode' });
+<<<<<<< HEAD
         }
         var filter = [];
         await CountryLang.findAll({
@@ -66,15 +71,59 @@ router.post('/', auth, async (req, res) => {
 				},
 			],
 			attributes: ['countryname','countrycode'],
+=======
+		}
+		var filter = [];
+		await CountryLang.findAll({
+			attributes: ['setlocale'],
+			where: {
+				countrycode: countrycode,
+			},
+		}).then((result) => {
+			result.forEach((element) => {
+				filter.push(element.dataValues.setlocale);
+			});
+		});
+		var input = [];
+		await Lang.findAll({
+			where: {
+				enable: constraint,
+				locale: {
+					[Op.notIn]: filter,
+				},
+			},
+			attributes: ['langcode', 'countrycode', 'locale'],
+		}).then((countries) => {
+			//res.status(200).json(countries);
+			countries.forEach((country) => {
+				input.push(country.countrycode);
+			});
+		});
+		console.log(input);
+		await Country.findAll({
+			include: [
+				{
+					model: Lang,
+					where: {
+						enable: 'true',
+						countrycode: input,
+						locale: {
+							[Op.notIn]: filter,
+						},
+					},
+					attributes: ['countrycode', 'langcode', 'locale'],
+				},
+			],
+			attributes: ['countryname'],
+>>>>>>> 0108354e59f9788439ef1cfd9a0fdaf9530189cb
 		}).then((countries) => {
 			res.status(200).json(countries);
 		});
 	} catch (error) {
 		console.error(error.message);
 		res.status(500).send(`Server error: ${error}`);
-    }
-    });
-
+	}
+});
 
 module.exports = router;
 /*var countrycode = req.body.countrycode;
