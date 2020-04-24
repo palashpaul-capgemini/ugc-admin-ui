@@ -69,6 +69,66 @@ router.post('/', auth, async (req, res) => {
 		res.status(500).send(`Server error: ${error}`);
 	}
 });
+router.post('/savelocale', auth, async (req, res) => {
+	try {
+		if(!req.body.countrycode){
+			return res.status(400).json({ errors: 'Invalid CountryCode' });
+		}
+		if(!req.body.locale){
+			return res.status(400).json({ errors: 'Please choose locale' });
+		}
+		var filter = [];
+		await CountryLang.findAll(
+			{
+				attributes : ['setlocale'],
+				where :{
+					countrycode : req.body.countrycode,
+					locale : req.body.locale
+				}
+			}
+		).then((result)=>{
+			result.forEach(element => {
+				filter.push(element.setlocale);
+		})
+	});
+		console.log(filter);
+		var input = [];
+		await Lang.findAll({
+            where : {
+                enable : 'true',
+                locale :{
+                      [Op.in]  : filter,
+                }
+            },attributes:['langcode','countrycode','locale']
+        }).then((countries)=>{
+            countries.forEach(country => {
+                input.push(country.countrycode);
+        })
+		});
+		console.log(input);
+        await Country.findAll({
+			include: [
+				{
+                    model: Lang,
+                    where :{
+                        enable :'true',
+						countrycode : input,
+						locale :{
+							[Op.in]  : filter,
+					  }
+                    },
+                    attributes: ['countrycode','langcode','locale']
+				},
+			],
+			attributes: ['countryname','countrycode'],
+		}).then((countries) => {
+			res.status(200).json(countries);
+		});
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send(`Server error: ${error}`);
+	}
+});
 router.post('/save', auth , async(req,res)=>{
 	if(!req.body.locale){
 		return res.status(400).json({ errors: 'Please select locale' });
