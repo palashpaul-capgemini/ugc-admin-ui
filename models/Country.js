@@ -31,13 +31,8 @@ Role.belongsTo(Country, { foreignKey: 'countrycode' });
 Country.sync();
 Role.sync();
 
-<<<<<<< HEAD
-Lang.hasOne(Country, { foreignKey: 'countrycode'});
-Country.belongsTo(Lang, { foreignKey: 'countrycode'});
-=======
 Lang.hasOne(Country, { foreignKey: 'countrycode' });
 Country.belongsTo(Lang, { foreignKey: 'countrycode' });
->>>>>>> 0108354e59f9788439ef1cfd9a0fdaf9530189cb
 
 Lang.sync();
 Country.sync();
