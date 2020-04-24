@@ -149,7 +149,7 @@ export class Dashboard extends Component {
 						<Grid container spacing={4}>
 							{this.state.countires !== null &&
 							this.state.countries.length > 0 ? (
-								<Grid item xs={6} md={3}>
+								<Grid item xs={6} md={2}>
 									<FormControl className={classes.formControl}>
 										<InputLabel htmlFor='countryname-native-helper'>
 											Country
@@ -184,14 +184,14 @@ export class Dashboard extends Component {
 							) : null}
 							{this.state.country !== null && this.state.countrycode !== null && (
 								<Fragment>
-									<Grid item xs={6} md={3}>
+									<Grid item xs={6} md={2}>
 										<Locale
 											country={this.state.country}
 											countrycode={this.state.countrycode}
 											setLocale={this.setLocale}
 										/>
 									</Grid>
-									<Grid item xs={6} md={3}>
+									<Grid item xs={6} md={4}>
 										<Configlist
 											countrycode={this.state.countrycode}
 											locale={this.state.locale}
@@ -199,7 +199,7 @@ export class Dashboard extends Component {
 											refresh={this.state.refresh}
 										/>
 									</Grid>
-									<Grid item xs={6} md={3}>
+									<Grid item xs={6} md={4}>
 										<Savedlist
 											countrycode={this.state.countrycode}
 											locale={this.state.locale}

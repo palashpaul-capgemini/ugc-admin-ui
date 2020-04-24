@@ -8,9 +8,10 @@ import {
 	Select,
 	Chip,
 	Box,
-	List,
+	TextField,
+	InputAdornment,
 } from '@material-ui/core';
-import { ArrowRight } from '@material-ui/icons';
+import { ArrowRight, Search } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -39,7 +40,7 @@ const styles = (theme) => ({
 		margin: theme.spacing(1),
 		width: '100%',
 		minWidth: 120,
-		maxWidth: 300,
+		// maxWidth: 300,
 		height: 400,
 		// itemSize: 46,
 		// itemCount: 200,
@@ -52,6 +53,13 @@ const styles = (theme) => ({
 		maxHeight: 150,
 		overflow: 'auto',
 	},
+	selectionList: {
+		height: 400,
+	},
+	search: {
+		// margin: theme.spacing(1),
+		width: '100%',
+	},
 });
 
 export class Configlist extends Component {
@@ -61,6 +69,7 @@ export class Configlist extends Component {
 			configlistAll: [],
 			configlist: [],
 			selectionList: [],
+			optionListFilter: [],
 			optionList: [],
 			message: null,
 			isUpdate: false,
@@ -71,6 +80,7 @@ export class Configlist extends Component {
 		this.deselectAll = this.deselectAll.bind(this);
 		this.selectAll = this.selectAll.bind(this);
 		this.addSelected = this.addSelected.bind(this);
+		this.searchByLocales = this.searchByLocales.bind(this);
 	}
 
 	componentDidMount() {
@@ -86,6 +96,7 @@ export class Configlist extends Component {
 				...prevState,
 				message: null,
 				selectionList: [],
+				optionListFilter: [],
 			}));
 			this.getConfiglist();
 		}
@@ -94,6 +105,7 @@ export class Configlist extends Component {
 				...prevState,
 				isUpdate: false,
 				selectionList: [],
+				optionListFilter: [],
 			}));
 			this.props.setUpdated(false);
 			this.getConfiglist();
@@ -208,91 +220,165 @@ export class Configlist extends Component {
 		}
 	};
 
+	searchByLocales = (e, searchValue) => {
+		e.preventDefault();
+		console.log(searchValue);
+		// console.log(this.state.optionList);
+		// const filteredList = [];
+		if (
+			searchValue !== null &&
+			searchValue !== '' &&
+			searchValue !== 'undefined' &&
+			searchValue.length > 0
+		) {
+			const filteredList = this.state.optionList.filter((item) => {
+				if (item.locale.includes(searchValue)) {
+					return item;
+				}
+			});
+			console.log(filteredList);
+			this.setState({ optionListFilter: filteredList });
+		} else {
+			this.setState({ optionListFilter: [] });
+		}
+	};
+
 	render() {
 		const { classes } = this.props;
 		return (
 			<Fragment>
 				<FormControl className={classes.formControl}>
 					<InputLabel shrink htmlFor='select-multiple-native'>
-						Country | Language code
+						Country , Locale
 					</InputLabel>
 					<Select
+						// classes={{ selectionList: classes.selectionList }}
+						// className={classes.selectionList}
 						multiple
 						native
 						value={this.state.selectionList}
 						onChange={this.handleChangeMultiple}
 						inputProps={{
 							id: 'select-multiple-native',
+							style: { height: 300 },
 						}}
 					>
-						{this.state.optionList.length > 0 &&
-							this.state.optionList.map((item, index) => (
-								<option
-									key={index}
-									value={JSON.stringify({
-										countryname: item.countryname,
-										countrycode: item.countrycode,
-										langcode: item.langcode,
-										locale: item.locale,
-									})}
-								>
-									{[
-										item.countryname,
-										', ',
-										item.countrycode,
-										' | ',
-										item.langcode,
-									]}
-								</option>
-							))}
+						{this.state.optionListFilter.length > 0
+							? this.state.optionListFilter.map((item, index) => (
+									<option
+										key={index}
+										value={JSON.stringify({
+											countryname: item.countryname,
+											countrycode: item.countrycode,
+											langcode: item.langcode,
+											locale: item.locale,
+										})}
+									>
+										{[
+											item.countryname,
+											', ',
+											// item.countrycode,
+											// ' | ',
+											item.locale,
+										]}
+									</option>
+							  ))
+							: this.state.optionList.length > 0 &&
+							  this.state.optionList.map((item, index) => (
+									<option
+										key={index}
+										value={JSON.stringify({
+											countryname: item.countryname,
+											countrycode: item.countrycode,
+											langcode: item.langcode,
+											locale: item.locale,
+										})}
+									>
+										{[
+											item.countryname,
+											', ',
+											// item.countrycode,
+											// ' | ',
+											item.locale,
+										]}
+									</option>
+							  ))}
 					</Select>
+					<form>
+						<Box mt={2}>
+							<Grid container spacing={1} alignItems='flex-end'>
+								<Grid item xs={12}>
+									<TextField
+										className={classes.search}
+										// id='input-with-icon-grid'
+										label='Search by locale'
+										InputProps={{
+											endAdornment: (
+												<InputAdornment position='end'>
+													<Search />
+												</InputAdornment>
+											),
+										}}
+										onChange={(e) => {
+											this.searchByLocales(e, e.target.value);
+										}}
+									/>
+								</Grid>
+								{/* <Grid item xs={2}>
+									<Search />
+								</Grid> */}
+							</Grid>
+						</Box>
+					</form>
 					<Grid container spacing={2}>
-						<Grid item xs={6}>
-							<Box mt={2}>
-								<Button
-									type='submit'
-									fullWidth
-									variant='contained'
-									color='primary'
-									onClick={(e) => this.selectAll(e)}
-								>
-									All
-								</Button>
-							</Box>
-						</Grid>
-						<Grid item xs={6}>
-							<Box mt={2}>
-								<Button
-									type='submit'
-									fullWidth
-									variant='contained'
-									color='primary'
-									onClick={(e) => this.deselectAll(e)}
-								>
-									None
-								</Button>
-							</Box>
-						</Grid>
 						<Grid item xs={12}>
-							<Button
-								type='submit'
-								fullWidth
-								variant='contained'
-								color='primary'
-								endIcon={<ArrowRight />}
-								onClick={(e) => this.addSelected(e)}
-							>
-								Add
-							</Button>
+							<Box mt={2}>
+								<Button
+									type='submit'
+									fullWidth
+									variant='contained'
+									color='primary'
+									endIcon={<ArrowRight />}
+									onClick={(e) => this.addSelected(e)}
+								>
+									Add
+								</Button>
+							</Box>
 							{this.state.message !== null && (
 								<Box mt={2} mb={2} spacing={1}>
 									<Chip color='secondary' label={this.state.message} />
 								</Box>
 							)}
 						</Grid>
+						<Grid item xs={6}>
+							{/* <Box mt={2}> */}
+							<Button
+								type='submit'
+								fullWidth
+								variant='contained'
+								color='primary'
+								onClick={(e) => this.selectAll(e)}
+							>
+								All
+							</Button>
+							{/* </Box> */}
+						</Grid>
+						<Grid item xs={6}>
+							{/* <Box mt={2}> */}
+							<Button
+								type='submit'
+								fullWidth
+								variant='contained'
+								color='primary'
+								onClick={(e) => this.deselectAll(e)}
+							>
+								None
+							</Button>
+							{/* </Box> */}
+						</Grid>
 					</Grid>
 				</FormControl>
-				<Grid item xs={12}>
+				{/* <Grid item xs={12}>
 					<Box className={classes.boxList}>
 						<List>
 							{this.state.selectionList.length > 0 &&
@@ -311,7 +397,7 @@ export class Configlist extends Component {
 								))}
 						</List>
 					</Box>
-				</Grid>
+				</Grid> */}
 			</Fragment>
 		);
 	}

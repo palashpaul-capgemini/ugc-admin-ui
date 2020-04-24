@@ -83,6 +83,7 @@ export class Locale extends Component {
 			const body = JSON.stringify({ countrycode: this.props.countrycode });
 			// console.log('body: ' + body);
 			const res = await axios.post('/api/lang', body, config);
+			console.log('Locale response:');
 			console.log(res.data);
 			// this.setState({ lang: res.data });
 
